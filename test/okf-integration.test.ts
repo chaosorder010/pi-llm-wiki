@@ -207,7 +207,7 @@ describe("OKF integration", () => {
 
     // Reserved files exist
     expect(readFileSync(join(paths.wiki, "index.md"), "utf8")).toContain('okf_version: "0.2"');
-    expect(readFileSync(join(paths.wiki, "log.md"), "utf8")).toContain("Wiki Update Log");
+    expect(readFileSync(join(paths.wiki, "log.md"), "utf8")).toContain("Wiki 更新日志");
 
     // Unknown type preserved
     const registry = readJson<{ pages: Record<string, { type: string }> }>(

@@ -124,9 +124,20 @@ describe("wiki retro", () => {
     expect(sourcePage).toContain("status: insight");
     expect(sourcePage).toContain("This is a test insight.");
     expect(sourcePage).toContain("category: devops");
-    expect(sourcePage).toContain("## Related");
-    expect(sourcePage).toContain("_Add links to related pages._");
+    expect(sourcePage).toContain("## 相关");
+    expect(sourcePage).toContain("_添加相关页面链接。_");
     expect(sourcePage).not.toContain("[[wikilinks]]");
+  });
+
+  it("should accept Chinese insight slugs", async () => {
+    const { saveInsight } = await import("../extensions/llm-wiki/lib/retro.js");
+    const paths = getVaultPaths(wikiDir);
+    const result = saveInsight(paths, "中文洞察", "中文洞察标题", "洞察正文。");
+    expect(result.slug).toBe("中文洞察");
+    expect(result.sourcePagePath).toContain("中文洞察.md");
+    expect(existsSync(result.sourcePagePath)).toBe(true);
+    const sourcePage = readFile(result.sourcePagePath);
+    expect(sourcePage).toContain("title: 中文洞察标题");
   });
 
   it("should save an insight without a category", async () => {

@@ -64,7 +64,7 @@ describe("runIngestSynthesis language injection", () => {
     spy.mockRestore();
   });
 
-  it("uses exact INGEST_SYSTEM when synthesisLanguage is unset", async () => {
+  it("defaults to Chinese when synthesisLanguage is unset", async () => {
     const { runIngestSynthesis } = await import("../extensions/llm-wiki/lib/ingest-worker.js");
 
     const spy = vi
@@ -83,12 +83,14 @@ describe("runIngestSynthesis language injection", () => {
       sourceId,
       manifest,
       extracted,
-      // synthesisLanguage not set
+      // synthesisLanguage not set — fork defaults to zh
     });
 
     expect(spy).toHaveBeenCalled();
     const callArgs = spy.mock.calls[0][0];
-    expect(callArgs.systemPrompt).toBe(INGEST_SYSTEM);
+    expect(callArgs.systemPrompt).toContain(INGEST_SYSTEM);
+    expect(callArgs.systemPrompt).toContain("in zh");
+    expect(callArgs.systemPrompt).toContain("concept/entity names");
 
     spy.mockRestore();
   });

@@ -170,48 +170,50 @@ const HEADINGS: Record<string, Record<string, string>> = {
     manifest: "マニフェスト",
     contradiction: "⚠️ **矛盾**",
   },
+  zh: {
+    summary: "摘要",
+    keyTakeaways: "关键要点",
+    entitiesMentioned: "提及的实体",
+    conceptsMentioned: "提及的概念",
+    notableQuotes: "值得注意的引用",
+    contradictions: "矛盾",
+    sourcePacket: "源数据包",
+    overview: "概览",
+    definition: "定义",
+    noneRecorded: "[尚无记录]",
+    none: "[无]",
+    id: "ID",
+    extracted: "已提取",
+    manifest: "清单",
+    contradiction: "⚠️ **矛盾**",
+    links: "链接",
+  },
 };
 
 function getHeadings(lang?: string): Record<string, string> {
+  // Fork default: Chinese when language unset or unknown.
   if (lang && HEADINGS[lang]) return HEADINGS[lang];
-  // English defaults
-  return {
-    summary: "Summary",
-    keyTakeaways: "Key Takeaways",
-    entitiesMentioned: "Entities Mentioned",
-    conceptsMentioned: "Concepts Mentioned",
-    notableQuotes: "Notable Quotes",
-    contradictions: "Contradictions",
-    sourcePacket: "Source Packet",
-    overview: "Overview",
-    definition: "Definition",
-    noneRecorded: "[None recorded]",
-    none: "[None]",
-    id: "ID",
-    extracted: "Extracted",
-    manifest: "Manifest",
-    contradiction: "⚠️ **Contradiction**",
-  };
+  return HEADINGS.zh;
 }
 
 function buildEntityPageBody(title: string, description: string, sourceId: string): string {
-  const desc = description.trim() || "One-line description.";
+  const desc = description.trim() || "一句话描述。";
   return `# ${title}
 
 ${desc}
 
-## Links
+## 链接
 
 - [${sourceId}](/sources/${sourceId}.md)`;
 }
 
 function buildConceptPageBody(title: string, definition: string, sourceId: string): string {
-  const def = definition.trim() || "One-line definition.";
+  const def = definition.trim() || "一句话定义。";
   return `# ${title}
 
 ${def}
 
-## Links
+## 链接
 
 - [${sourceId}](/sources/${sourceId}.md)`;
 }
@@ -424,7 +426,7 @@ export function commitSynthesis(
         {
           type: "entity",
           title: e.title,
-          description: e.description.trim() || "One-line description.",
+          description: e.description.trim() || "一句话描述。",
           created: date,
           updated: date,
         },
@@ -450,7 +452,7 @@ export function commitSynthesis(
         {
           type: "concept",
           title: c.title,
-          description: c.definition.trim() || "One-line definition.",
+          description: c.definition.trim() || "一句话定义。",
           created: date,
           updated: date,
         },
@@ -541,9 +543,9 @@ export async function runIngestSynthesis(
   const content = extracted.slice(0, maxChars ?? 24_000);
   if (!content.trim()) return undefined;
 
-  const languageInstruction = synthesisLanguage
-    ? `\n\nWrite all generated content in ${synthesisLanguage}, including titles, headings, summaries, descriptions, and concept/entity names. Only preserve code, API names, file paths, commands, exact technical identifiers, and verbatim quotations in their original form.`
-    : "";
+  // Fork default: always synthesize in Chinese when unset.
+  const effectiveLang = synthesisLanguage?.trim() || "zh";
+  const languageInstruction = `\n\nWrite all generated content in ${effectiveLang}, including titles, headings, summaries, descriptions, and concept/entity names. Only preserve code, API names, file paths, commands, exact technical identifiers, and verbatim quotations in their original form.`;
   const systemPrompt = INGEST_SYSTEM + languageInstruction;
 
   let committed: CommitResult | undefined;
@@ -561,7 +563,7 @@ export async function runIngestSynthesis(
         manifest,
         params,
         undefined,
-        synthesisLanguage,
+        effectiveLang,
         wikilinkValidation,
       );
       if (!outcome.ok) {

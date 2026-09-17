@@ -277,7 +277,7 @@ it("backs up and repairs malformed legacy pages before rebuilding metadata", asy
     cwd: root,
     hasUI: false,
   });
-  expect(audit.content[0].text).toContain("Projection-blocking diagnostics");
+  expect(audit.content[0].text).toContain("投影阻塞诊断");
   for (const [path, content] of Object.entries(fixtures)) {
     expect(readFileSync(join(paths.wiki, path), "utf8")).toBe(content);
   }

@@ -75,13 +75,28 @@ describe("wiki observation", () => {
     expect(existsSync(result.pagePath)).toBe(true);
 
     const content = readFileSync(result.pagePath, "utf-8");
-    expect(content).toContain("Observation: JWT auth middleware added");
+    expect(content).toContain("观察：JWT auth middleware added");
     expect(content).toContain("User decided to use JWT with refresh tokens");
     expect(content).toContain("relevance: high");
     expect(content).toContain("- auth");
     expect(content).toContain("- jwt");
     expect(content).toContain("- backend");
     expect(content).toContain("source_context: Adding authentication module");
+  });
+
+  it("should keep Chinese titles in observation filenames", () => {
+    const paths = getVaultPaths(vaultDir);
+    const result = saveObservation(paths, {
+      title: "中文标题测试",
+      content: "中文观察内容。",
+      relevance: "high",
+    });
+
+    expect(result.slug).toContain("中文标题测试");
+    expect(result.pagePath).toContain("中文标题测试.md");
+    const content = readFileSync(result.pagePath, "utf-8");
+    expect(content).toContain("观察：中文标题测试");
+    expect(content).toMatch(/title:\s*观察：中文标题测试/);
   });
 
   it("should save an observation with default optional fields", () => {
@@ -174,7 +189,8 @@ describe("wiki observation", () => {
       relevance: "low",
     });
 
-    expect(result.slug).toContain("complex-edge-case-100-done");
+    // slugify strips punctuation (/ : % !) so "Complex/Edge" → "complexedge"
+    expect(result.slug).toContain("complexedge-case-100-done");
     expect(result.slug).not.toContain("//");
     expect(result.slug).not.toContain("_");
   });

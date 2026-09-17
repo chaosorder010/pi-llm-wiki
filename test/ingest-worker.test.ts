@@ -45,7 +45,7 @@ describe("buildIngestedSourcePage", () => {
     expect(page).toContain("[Self-Attention](/concepts/self-attention.md)");
     expect(page).toContain("[Google Brain](/entities/google-brain.md)");
     expect(page).toContain("> Attention is all you need — Vaswani et al.");
-    expect(page).toContain("⚠️ **Contradiction**");
+    expect(page).toContain("⚠️ **矛盾**");
     expect(page).toContain("[https://example.com/paper]");
   });
 
@@ -56,8 +56,8 @@ describe("buildIngestedSourcePage", () => {
       "2026-06-06",
     );
     expect(page).toContain("status: ingested");
-    expect(page).toContain("- [None]");
-    expect(page).not.toContain("## Contradictions");
+    expect(page).toContain("- [无]");
+    expect(page).not.toContain("## 矛盾");
   });
 });
 

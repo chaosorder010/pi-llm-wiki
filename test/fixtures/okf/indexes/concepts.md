@@ -1,9 +1,9 @@
 # concepts
 
-## Directories
+## 目录
 
 - [nested/](nested/index.md)
 
-## Concepts
+## 概念
 
 - [RAG \[safe\]](retrieval%20augmented.md) — Grounds generation using evidence.

@@ -34,16 +34,16 @@ describe("synthesisLanguage config", () => {
     expect(config.synthesisLanguage).toBe("fr");
   });
 
-  it("ignores empty synthesisLanguage", () => {
+  it("falls back to fork default zh when synthesisLanguage is empty", () => {
     const dir = createTestDir({ "llm-wiki": { synthesisLanguage: "" } });
     const config = loadTaskConfig(dir);
-    expect(config.synthesisLanguage).toBeUndefined();
+    expect(config.synthesisLanguage).toBe("zh");
   });
 
-  it("ignores non-string synthesisLanguage", () => {
+  it("falls back to fork default zh when synthesisLanguage is non-string", () => {
     const dir = createTestDir({ "llm-wiki": { synthesisLanguage: 123 } });
     const config = loadTaskConfig(dir);
-    expect(config.synthesisLanguage).toBeUndefined();
+    expect(config.synthesisLanguage).toBe("zh");
   });
 
   it("coexists with other llm-wiki settings", () => {
@@ -60,10 +60,10 @@ describe("synthesisLanguage config", () => {
     expect(config.notices).toBe(false);
   });
 
-  it("defaults to undefined when not set", () => {
+  it("defaults to zh when not set (fork default)", () => {
     const dir = createTestDir({});
     const config = loadTaskConfig(dir);
-    expect(config.synthesisLanguage).toBeUndefined();
+    expect(config.synthesisLanguage).toBe("zh");
   });
 
   // Cleanup after all tests

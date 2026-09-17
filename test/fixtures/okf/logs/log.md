@@ -1,4 +1,4 @@
-# Wiki Update Log
+# Wiki 更新日志
 
 ## 2026-08-02
 

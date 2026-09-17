@@ -91,10 +91,10 @@ describe("bootstrap", () => {
 
     const schema = readFileSync(join(paths.dotWiki, "WIKI_SCHEMA.md"), "utf8");
     expect(schema).toContain(
-      "meta/events.jsonl | extension tools | append-only authoritative state",
+      "meta/events.jsonl | 扩展工具 | 仅追加的权威状态",
     );
-    expect(schema).toContain("meta/* except events.jsonl | extension | generated projections");
-    expect(schema).toContain("Back up `meta/events.jsonl` to preserve activity history");
+    expect(schema).toContain("meta/* 除 events.jsonl | 扩展 | 生成的投影");
+    expect(schema).toContain("备份 `meta/events.jsonl` 以保留活动历史");
   });
 
   it("blocks a damaged project vault instead of falling back to personal wiki", async () => {

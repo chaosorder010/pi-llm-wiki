@@ -5,7 +5,7 @@ import { scheduleReindex } from "./indexing.js";
 import { createKnowledgeDocument, writeKnowledgeDocumentFile } from "./knowledge-document.js";
 import { appendEvent, rebuildMetadataLight } from "./metadata.js";
 import type { Runtime } from "./runtime.js";
-import { fmtDate, resolveVaultPaths, type VaultPaths } from "./utils.js";
+import { fmtDate, resolveVaultPaths, slugify, type VaultPaths } from "./utils.js";
 import { assertWritableVault, inspectWritableVault } from "./vault-format.js";
 
 // ─── Types ─────────────────────────────────────────────
@@ -56,12 +56,8 @@ export function saveObservation(
   const today = fmtDate();
   const timestamp = new Date().toISOString();
 
-  // Generate a slug from title
-  const slugBase = input.title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 60);
+  // Generate a slug from title (Unicode-aware: Chinese titles keep Chinese filenames)
+  const slugBase = slugify(input.title).slice(0, 60);
   const slug = `obs-${today}-${slugBase}`;
 
   const pagePath = join(paths.wiki, "sources", `${slug}.md`);
@@ -70,20 +66,20 @@ export function saveObservation(
   const tags = input.tags ?? "";
   const sourceContext = input.source_context ?? "";
 
-  const body = `# ${relevanceEmoji} Observation: ${input.title}
+  const body = `# ${relevanceEmoji} 观察：${input.title}
 
 ${input.content}
 
-*Relevance: ${input.relevance}*${sourceContext ? `\n*Context: ${sourceContext}*` : ""}${tags ? `\n*Tags: ${tags}*` : ""}
+*相关度: ${input.relevance}*${sourceContext ? `\n*上下文: ${sourceContext}*` : ""}${tags ? `\n*标签: ${tags}*` : ""}
 
 ---
-*Observed: ${timestamp}*`;
+*观察时间: ${timestamp}*`;
 
   const doc = createKnowledgeDocument(
     `sources/${slug}.md`,
     {
       type: "source",
-      title: `Observation: ${input.title}`,
+      title: `观察：${input.title}`,
       slug,
       status: "observation",
       created: today,
@@ -251,14 +247,13 @@ export function registerWikiObserve(
           {
             type: "text",
             text: [
-              `${relevanceEmoji} **Observation saved**: ${params.title}`,
+              `${relevanceEmoji} **观察已保存**：${params.title}`,
               "",
-              `- Page: \`${result.pagePath}\``,
-              `- Relevance: ${params.relevance}`,
-              params.tags ? `- Tags: ${params.tags}` : "",
+              `- 页面: \`${result.pagePath}\``,
+              `- 相关度: ${params.relevance}`,
+              params.tags ? `- 标签: ${params.tags}` : "",
               "",
-              "This observation is now searchable via wiki_recall. " +
-                "It will compound with future observations across sessions.",
+              "该观察已可通过 wiki_recall 检索，并会与后续会话中的观察累积。",
             ]
               .filter((l) => l !== "")
               .join("\n"),

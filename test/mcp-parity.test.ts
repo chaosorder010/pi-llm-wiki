@@ -442,7 +442,7 @@ describe("Phase 1 MCP tools (#221)", () => {
     const pages = readdirSync(join(paths.wiki, "sources")).filter((f) => f.endsWith(".md"));
     expect(pages.length).toBe(1);
     const text = readFileSync(join(paths.wiki, "sources", pages[0]), "utf-8");
-    expect(text).toContain("Observation: MCP parity proven");
+    expect(text).toContain("观察：MCP parity proven");
     expect(text).toContain("high");
   });
 

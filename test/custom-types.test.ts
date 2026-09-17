@@ -110,7 +110,7 @@ describe("wiki_ensure_page custom types", () => {
     const file = join(getVaultPaths(wikiDir).wiki, "metrics", "api-latency.md");
     const body = readFileSync(file, "utf-8");
     expect(body).toContain("# API Latency");
-    expect(body).toContain("## Links");
+    expect(body).toContain("## 链接");
   });
 
   it("custom type with explicit content writes that content", async () => {

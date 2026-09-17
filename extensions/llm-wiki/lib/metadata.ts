@@ -290,20 +290,31 @@ function buildIndexMarkdown(registry: Registry): string {
 
   const sections: string[] = [];
   sections.push(
-    "# Wiki Index\n\n> Auto-generated from meta/registry.json. Do not edit manually.\n",
+    "# Wiki 索引\n\n> 由 meta/registry.json 自动生成，请勿手动编辑。\n",
   );
 
+  const typeLabels: Record<string, string> = {
+    source: "来源",
+    entity: "实体",
+    concept: "概念",
+    synthesis: "综合",
+    analysis: "分析",
+    requirement: "需求",
+    skill: "技能",
+    case: "案例",
+  };
+
   for (const [type, items] of Object.entries(byType).sort()) {
-    const label = `${type.charAt(0).toUpperCase() + type.slice(1)}s`;
+    const label = typeLabels[type] ?? `${type.charAt(0).toUpperCase() + type.slice(1)}s`;
     sections.push(`## ${label}\n`);
     for (const { id, entry } of items.sort((a, b) => a.id.localeCompare(b.id))) {
-      sections.push(`- [[${id}]] — ${entry.title} *(created: ${entry.created || "unknown"})*`);
+      sections.push(`- [[${id}]] — ${entry.title} *(创建: ${entry.created || "未知"})*`);
     }
     sections.push("");
   }
 
   sections.push(
-    `---\n*Last updated: ${registry.last_updated}* | *Total pages: ${Object.keys(registry.pages).length}*`,
+    `---\n*最后更新: ${registry.last_updated}* | *页面总数: ${Object.keys(registry.pages).length}*`,
   );
   return `${sections.join("\n")}\n`;
 }
@@ -325,10 +336,10 @@ function buildLogMarkdown(eventsJsonl: string): string {
   }
 
   const lines: string[] = [];
-  lines.push("# Activity Log\n\n> Auto-generated from meta/events.jsonl. Do not edit manually.\n");
+  lines.push("# 活动日志\n\n> 由 meta/events.jsonl 自动生成，请勿手动编辑。\n");
 
   for (const ev of events) {
-    const ts = ev.timestamp || "unknown";
+    const ts = ev.timestamp || "未知";
     const kind = ev.kind || "event";
     const details = Object.entries(ev)
       .filter(([k]) => k !== "timestamp" && k !== "kind")
@@ -340,7 +351,7 @@ function buildLogMarkdown(eventsJsonl: string): string {
     lines.push("");
   }
 
-  if (events.length === 0) lines.push("_No events recorded yet._\n");
+  if (events.length === 0) lines.push("_尚无事件记录。_\n");
   return `${lines.join("\n")}\n`;
 }
 
@@ -509,7 +520,7 @@ export function buildDirectoryIndexes(
     // List directories first
     if (dirs.size > 0) {
       lines.push("");
-      lines.push("## Directories");
+      lines.push("## 目录");
       lines.push("");
       for (const subDir of [...dirs].sort(compareCodePoint)) {
         const encoded = encodeRelativePath(`${subDir}/index.md`);
@@ -520,7 +531,7 @@ export function buildDirectoryIndexes(
     // List concepts
     if (concepts.length > 0) {
       lines.push("");
-      lines.push("## Concepts");
+      lines.push("## 概念");
       lines.push("");
       const sorted = [...concepts].sort((a, b) => {
         const aRel = dirPath ? a.id.slice(dirPath.length + 1) : a.id;
@@ -642,7 +653,7 @@ export function buildOkfLog(eventsJsonl: string, path = "meta/events.jsonl"): Ok
 
   const sortedDates = [...byDate.keys()].sort((a, b) => b.localeCompare(a));
 
-  const outLines: string[] = ["# Wiki Update Log"];
+  const outLines: string[] = ["# Wiki 更新日志"];
 
   for (const date of sortedDates) {
     const dayEvents = byDate.get(date)!;

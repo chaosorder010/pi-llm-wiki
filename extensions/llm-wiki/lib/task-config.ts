@@ -146,8 +146,8 @@ export interface TaskConfig {
 
   /**
    * Language for background ingest synthesis narrative content (issue #124).
-   * BCP 47 language tag (e.g. "ru", "fr"). When unset, synthesis defaults to
-   * English. Applies to titles, summaries, takeaways, descriptions, etc.; raw
+   * BCP 47 language tag (e.g. "ru", "fr"). This fork defaults to `"zh"`.
+   * Applies to titles, summaries, takeaways, descriptions, etc.; raw
    * source content and technical identifiers remain unchanged.
    */
   synthesisLanguage?: string;
@@ -181,7 +181,10 @@ export interface TaskConfig {
   customTypes?: Record<string, string>;
 }
 
-export const TASK_DEFAULTS: TaskConfig = {};
+export const TASK_DEFAULTS: TaskConfig = {
+  // Fork default: always synthesize narrative content in Chinese.
+  synthesisLanguage: "zh",
+};
 
 /**
  * Resolve whether user-facing wiki notices are enabled (issue #77). Defaults

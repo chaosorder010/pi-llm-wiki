@@ -27,11 +27,11 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
     if (repair?.repaired) projection = rebuildMetadata(paths);
     if (!projection.ok) {
       return [
-        "# Wiki Lint Report",
+        "# Wiki Lint 报告",
         "",
-        repair?.repaired ? `Legacy pages repaired: ${repair.repaired}` : "",
-        repair?.manifestPath ? `Repair manifest: ${repair.manifestPath}` : "",
-        "Projection-blocking diagnostics:",
+        repair?.repaired ? `已修复遗留页面: ${repair.repaired}` : "",
+        repair?.manifestPath ? `修复清单: ${repair.manifestPath}` : "",
+        "投影阻塞诊断:",
         ...projection.diagnostics.map(
           (diagnostic) => `- ${diagnostic.code}: ${diagnostic.path}: ${diagnostic.message}`,
         ),
@@ -45,9 +45,9 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
     const diagnostics = [...vault.diagnostics, ...audit.diagnostics];
     if (vault.blocking || audit.blocking) {
       return [
-        "# Wiki Lint Report",
+        "# Wiki Lint 报告",
         "",
-        "Projection-blocking diagnostics:",
+        "投影阻塞诊断:",
         ...diagnostics.map(
           (diagnostic) => `- ${diagnostic.code}: ${diagnostic.path}: ${diagnostic.message}`,
         ),
@@ -72,11 +72,11 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
       sources.add(page.id);
       gapSources.set(unresolved.target, sources);
       missingPages++;
-      findings.push(`Missing page: ${unresolved.target} (in ${page.id})`);
+      findings.push(`缺失页面: ${unresolved.target}（见于 ${page.id}）`);
     }
     for (const d of resolved.diagnostics) {
       if (d.code === "link_ambiguous") {
-        findings.push(d.message.replace("Ambiguous wikilink: ", "Ambiguous: "));
+        findings.push(d.message.replace("Ambiguous wikilink: ", "歧义链接: "));
       }
     }
   }
@@ -85,11 +85,11 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
   for (const page of pages) {
     if (inbound[page.id] === 0) {
       orphans++;
-      findings.push(`Orphan: ${page.id} has no inbound links`);
+      findings.push(`孤立页: ${page.id} 没有入链`);
     }
-    if (page.body.includes("⚠️ **Contradiction")) {
+    if (page.body.includes("⚠️ **Contradiction") || page.body.includes("⚠️ **矛盾")) {
       contradictions++;
-      findings.push(`Contradiction flagged in ${page.id}`);
+      findings.push(`矛盾标记见于 ${page.id}`);
     }
   }
 
@@ -119,7 +119,7 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
           updated: fmtDate(),
           status: "stub",
         },
-        `_Stub auto-created by lint. Expand with content from: ${gap.mentionedBy
+        `_存根由 lint 自动创建。请根据以下来源扩展内容: ${gap.mentionedBy
           .map((source) => `[${source}](/${source}.md)`)
           .join(", ")}_`,
       );
@@ -136,20 +136,20 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
   }
 
   const reportLines = [
-    "# Wiki Lint Report",
-    `Generated: ${fmtDate()}`,
+    "# Wiki Lint 报告",
+    `生成于: ${fmtDate()}`,
     "",
-    "## Summary",
-    `- Total pages: ${pages.length}`,
-    `- Orphans: ${orphans}`,
-    `- Missing pages: ${missingPages}`,
-    `- Contradictions: ${contradictions}`,
-    autoFix ? `- Missing-page fixes applied: ${fixesApplied}` : "",
-    repair?.repaired ? `- Legacy pages repaired: ${repair.repaired}` : "",
-    repair?.manifestPath ? `- Repair manifest: ${repair.manifestPath}` : "",
+    "## 摘要",
+    `- 页面总数: ${pages.length}`,
+    `- 孤立页: ${orphans}`,
+    `- 缺失页面: ${missingPages}`,
+    `- 矛盾: ${contradictions}`,
+    autoFix ? `- 已应用缺失页修复: ${fixesApplied}` : "",
+    repair?.repaired ? `- 已修复遗留页面: ${repair.repaired}` : "",
+    repair?.manifestPath ? `- 修复清单: ${repair.manifestPath}` : "",
     "",
-    "## Findings",
-    findings.length ? findings.map((finding) => `- ${finding}`).join("\n") : "✅ No issues found!",
+    "## 发现问题",
+    findings.length ? findings.map((finding) => `- ${finding}`).join("\n") : "✅ 未发现问题！",
     "",
   ].filter(Boolean);
   const reportPath = autoFix ? join(paths.outputs, `lint-${fmtDate()}.md`) : undefined;

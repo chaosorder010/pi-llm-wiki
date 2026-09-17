@@ -161,7 +161,7 @@ describe("OKF projections", () => {
 
   it("renders empty log header for no events", () => {
     const log = buildOkfLog("");
-    expect(log.markdown).toBe("# Wiki Update Log\n");
+    expect(log.markdown).toBe("# Wiki 更新日志\n");
     expect(log.diagnostics).toEqual([]);
   });
 
@@ -266,7 +266,7 @@ describe("OKF rebuild integration", () => {
 
     rebuildMetadata(paths);
     expect(readFileSync(join(paths.wiki, "index.md"), "utf8")).toContain('okf_version: "0.2"');
-    expect(readFileSync(join(paths.wiki, "concepts/index.md"), "utf8")).toContain("## Directories");
+    expect(readFileSync(join(paths.wiki, "concepts/index.md"), "utf8")).toContain("## 目录");
     expect(readFileSync(join(paths.wiki, "concepts/nested/index.md"), "utf8")).toContain("Deep");
 
     // Delete nested concept and rebuild
@@ -562,7 +562,7 @@ describe("OKF rebuild integration", () => {
     expect(result.diagnostics.map((diagnostic) => diagnostic.code)).not.toContain(
       "event_source_missing",
     );
-    expect(readFileSync(join(paths.meta, "log.md"), "utf8")).toContain("_No events recorded yet._");
-    expect(readFileSync(join(paths.wiki, "log.md"), "utf8")).toBe("# Wiki Update Log\n");
+    expect(readFileSync(join(paths.meta, "log.md"), "utf8")).toContain("_尚无事件记录。_");
+    expect(readFileSync(join(paths.wiki, "log.md"), "utf8")).toBe("# Wiki 更新日志\n");
   });
 });

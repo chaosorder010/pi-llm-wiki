@@ -679,131 +679,131 @@ export function buildPageBody(type: string, title: string): string {
   if (type === "entity") {
     return `# ${title}
 
-One-line description.
+一句话描述。
 
-## Overview
+## 概览
 
-[Key facts]
+[关键事实]
 
-## Links
+## 链接
 
-- [related-page](/concepts/related-page.md)`;
+- [相关页面](/concepts/相关页面.md)`;
   }
   if (type === "concept") {
     return `# ${title}
 
-One-line definition.
+一句话定义。
 
-## Definition
+## 定义
 
-[Clear explanation]
+[清晰说明]
 
-## Links
+## 链接
 
-- [related-page](/concepts/related-page.md)`;
+- [相关页面](/concepts/相关页面.md)`;
   }
   if (type === "synthesis") {
     return `# ${title}
 
-Cross-cutting analysis.
+跨来源综合分析。
 
-## Question
+## 问题
 
-[What drove this?]
+[驱动本次综合的问题是什么？]
 
-## Links
+## 链接
 
-- [related-page](/concepts/related-page.md)`;
+- [相关页面](/concepts/相关页面.md)`;
   }
   if (type === "analysis") {
     return `# ${title}
 
-Durable answer from a query.
+查询得到的持久化答案。
 
-## Question
+## 问题
 
-[Original question]
+[原始问题]
 
-## Links
+## 链接
 
-- [related-page](/concepts/related-page.md)`;
+- [相关页面](/concepts/相关页面.md)`;
   }
   if (type === "skill") {
     return `# ${title}
 
-_One-line summary of the reusable pattern this skill captures._
+_该技能所捕获可复用模式的一句话摘要。_
 
-## When to Use
+## 何时使用
 
-[Trigger conditions — when this pattern applies]
+[触发条件 — 何时适用此模式]
 
-## Procedure
+## 步骤
 
-1. [Step 1]
-2. [Step 2]
+1. [步骤 1]
+2. [步骤 2]
 
-## Pitfalls
+## 陷阱
 
-- [Known failure mode or caveat]
+- [已知失败模式或注意点]
 
-## Distilled From
+## 蒸馏自
 
-_Trajectories this skill was generalized from._
+_概括出本技能的轨迹来源。_
 
 - [trajectories/TRJ-...](/trajectories/TRJ-....md)`;
   }
   if (type === "case") {
     return `# ${title}
 
-_One-line summary of the specific task this case records._
+_该案例所记录具体任务的一句话摘要。_
 
-## Task
+## 任务
 
-[What was requested]
+[当时请求是什么]
 
-## Approach
+## 做法
 
-[How the agent solved it — key steps and decisions]
+[智能体如何解决 — 关键步骤与决策]
 
-## Outcome
+## 结果
 
-[Result, and anything worth reusing or avoiding next time]
+[结果，以及下次值得复用或避免的点]
 
-## Trajectory
+## 轨迹
 
-- [trajectories/TRJ-...](/trajectories/TRJ-....md) — captured tool-call run`;
+- [trajectories/TRJ-...](/trajectories/TRJ-....md) — 已捕获的工具调用记录`;
   }
   if (type === "requirement") {
     return `# ${title}
 
-## Description
+## 描述
 
-[Clear description of what this requirement entails]
+[该需求涵盖什么的清晰说明]
 
-## Acceptance Criteria
+## 验收标准
 
-- [ ] [Criterion 1]
-- [ ] [Criterion 2]
+- [ ] [标准 1]
+- [ ] [标准 2]
 
-## Dependencies
+## 依赖
 
-_Pages this requirement depends on._
+_本需求所依赖的页面。_
 
-## Implementation Notes
+## 实现备注
 
-[Optional notes]
+[可选备注]
 
-## Sources
+## 来源
 
-- [sources/SRC-...](/sources/SRC-....md) — original concept capture`;
+- [sources/SRC-...](/sources/SRC-....md) — 原始概念捕获`;
   }
   return `# ${title}
 
-[Description to be filled]
+[待填写描述]
 
-## Links
+## 链接
 
-- [related-page](/concepts/related-page.md)`;
+- [相关页面](/concepts/相关页面.md)`;
 }
 
 // ─── 5. wiki_search ─────────────────────────────────────

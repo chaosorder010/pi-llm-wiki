@@ -4,10 +4,10 @@ okf_version: "0.2"
 
 # Example Wiki
 
-## Directories
+## 目录
 
 - [concepts/](concepts/index.md)
 
-## Concepts
+## 概念
 
 - [Welcome](welcome.md) — Entry point.

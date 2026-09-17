@@ -7,7 +7,7 @@ import { applyWikilinkGate, buildWikilinkIndex } from "./knowledge-links.js";
 import { appendEvent, rebuildMetadataLight } from "./metadata.js";
 import type { Runtime } from "./runtime.js";
 import { loadTaskConfig, resolveWikilinkValidation } from "./task-config.js";
-import { fmtDate, readJson, resolveVaultPaths, type VaultPaths } from "./utils.js";
+import { fmtDate, readJson, resolveVaultPaths, slugify, type VaultPaths } from "./utils.js";
 import { assertWritableVault, inspectWritableVault } from "./vault-format.js";
 
 // ─── Public API ────────────────────────────────────────
@@ -28,7 +28,10 @@ export interface RetroResult {
  * is still available via wiki_capture_source → wiki_ingest for deep research.
  */
 function insightPath(paths: VaultPaths, slug: string): string {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || slug === "index" || slug === "log") {
+  // Accept any slugify-stable value (including Chinese). Reject path traversal
+  // and the reserved index/log names (slugify rewrites those to *-page).
+  const normalized = slugify(slug);
+  if (!normalized || normalized !== slug || slug.includes("/") || slug.includes("\\")) {
     throw new Error(`Invalid insight slug: ${slug}`);
   }
   const directory = resolve(paths.wiki, "sources");
@@ -54,14 +57,14 @@ export function saveInsight(
 
 ${body}
 
-${category ? `*Category: ${category}*` : ""}
+${category ? `*分类: ${category}*` : ""}
 
 ---
-*Captured: ${today}*
+*捕获于: ${today}*
 
-## Related
+## 相关
 
-_Add links to related pages._`;
+_添加相关页面链接。_`;
 
   const doc = createKnowledgeDocument(
     `sources/${slug}.md`,
@@ -214,11 +217,11 @@ export function registerWikiRetro(pi: ExtensionAPI, runtime?: Runtime): void {
           {
             type: "text",
             text: [
-              `🧠 **Insight saved**: ${params.title}`,
+              `🧠 **洞察已保存**：${params.title}`,
               "",
-              `- Page: \`${result.sourcePagePath}\``,
+              `- 页面: \`${result.sourcePagePath}\``,
               "",
-              "This insight will be auto-surfaced by wiki_recall in future sessions.",
+              "该洞察将在后续会话中由 wiki_recall 自动浮现。",
               gateNote,
             ]
               .filter(Boolean)

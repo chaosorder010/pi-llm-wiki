@@ -123,13 +123,13 @@ describe("package structure", () => {
     expect(existsSync(skillPath)).toBe(true);
     const content = readFile(skillPath);
     expect(content).toContain("name: llm-wiki");
-    expect(content).toContain("## Golden Rules");
-    expect(content).toContain("RAW IS IMMUTABLE");
-    expect(content).toContain("## Workflows");
+    expect(content).toContain("## 黄金规则");
+    expect(content).toContain("RAW 不可变");
+    expect(content).toContain("## 工作流");
     expect(content).toContain("wiki_ingest");
-    expect(content).toContain("Obsidian Integration");
-    expect(content).toContain("Personal Wiki");
-    expect(content).toContain("Company Wiki");
+    expect(content).toContain("Obsidian 集成");
+    expect(content).toContain("个人 Wiki");
+    expect(content).toContain("公司 Wiki");
   });
 
   it("should have all prompt templates with frontmatter", () => {
@@ -171,7 +171,7 @@ describe("package structure", () => {
     }
 
     const query = readFile(join(rootDir, "prompts", "wiki-query.md"));
-    expect(query).toContain("## User Question");
+    expect(query).toContain("## 用户问题");
     expect(query).toContain("$ARGUMENTS");
   });
 
@@ -354,12 +354,12 @@ describe("skill frontmatter validation", () => {
 
   it("should contain the agent working-memory decision table (issue #80, criterion #7)", () => {
     const content = readFile(skillPath);
-    expect(content).toContain("When to use which memory tool");
+    expect(content).toContain("何时用哪种记忆工具");
     expect(content).toContain("wiki_capture_trajectory");
     expect(content).toContain("wiki_retro");
     expect(content).toContain("wiki_observe");
-    expect(content).toContain("replayable");
-    expect(content).toContain("prose **insight");
+    expect(content).toContain("可回放");
+    expect(content).toContain("散文**洞察");
   });
 
   it("should have a description under 1024 characters", () => {

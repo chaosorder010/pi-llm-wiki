@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, expect, it } from "vitest";
 import { ensureVaultStructure, getVaultPaths } from "../extensions/llm-wiki/lib/utils.js";
@@ -9,8 +10,9 @@ const script = join(rootDir, "scripts", "claude-session-start.mjs");
 const temporaryRoots: string[] = [];
 
 function createVault(): string {
-  mkdirSync(join(rootDir, "tmp"), { recursive: true });
-  const root = mkdtempSync(join(rootDir, "tmp", "claude-session-"));
+  // Keep sandboxes outside the package tree so walking up does not hit a
+  // developer/project .llm-wiki under the repo root.
+  const root = mkdtempSync(join(tmpdir(), "claude-session-"));
   temporaryRoots.push(root);
   const paths = getVaultPaths(root);
   ensureVaultStructure(paths);
@@ -56,14 +58,14 @@ it("emits SessionStart additionalContext with page and pending counts", () => {
 
 it("honors an explicit WIKI_ROOT override", () => {
   const root = createVault();
-  const empty = mkdtempSync(join(rootDir, "tmp", "claude-session-override-"));
+  const empty = mkdtempSync(join(tmpdir(), "claude-session-override-"));
   temporaryRoots.push(empty);
   const output = JSON.parse(runHook({ cwd: empty, source: "startup" }, { WIKI_ROOT: root }));
   expect(output.hookSpecificOutput.additionalContext).toContain(`LLM Wiki active at ${root}`);
 });
 
 it("does not treat WIKI_HOME as a project vault", () => {
-  const sandbox = mkdtempSync(join(rootDir, "tmp", "claude-session-personal-"));
+  const sandbox = mkdtempSync(join(tmpdir(), "claude-session-personal-"));
   temporaryRoots.push(sandbox);
   const personal = join(sandbox, "home", "personal");
   const project = join(personal, "projects", "empty");
@@ -74,7 +76,7 @@ it("does not treat WIKI_HOME as a project vault", () => {
 });
 
 it("excludes a personal vault reached through a symlinked WIKI_HOME", () => {
-  const sandbox = mkdtempSync(join(rootDir, "tmp", "claude-session-symlink-"));
+  const sandbox = mkdtempSync(join(tmpdir(), "claude-session-symlink-"));
   temporaryRoots.push(sandbox);
   const realHome = join(sandbox, "real-home");
   const linkedHome = join(sandbox, "linked-home");
@@ -103,7 +105,7 @@ it("keeps notice and process switches independently testable", () => {
 });
 
 it("is silent for no vault, malformed input, and null input", () => {
-  const empty = mkdtempSync(join(rootDir, "tmp", "claude-session-empty-"));
+  const empty = mkdtempSync(join(tmpdir(), "claude-session-empty-"));
   temporaryRoots.push(empty);
   expect(runHook({ cwd: empty, source: "startup" })).toBe("");
   expect(execFileSync(process.execPath, [script], { input: "not-json", encoding: "utf8" })).toBe(

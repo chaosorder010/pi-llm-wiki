@@ -161,7 +161,7 @@ describe("loadTaskConfig across hosts", () => {
   it("ignores a corrupt YAML settings file without throwing", () => {
     writeSettings(".omp", "config.yml", "llm-wiki:\n  - [unbalanced\n");
     expect(() => loadTaskConfig(tmpDir)).not.toThrow();
-    expect(loadTaskConfig(tmpDir).synthesisLanguage).toBeUndefined();
+    expect(loadTaskConfig(tmpDir).synthesisLanguage).toBe("zh");
   });
 });
 
