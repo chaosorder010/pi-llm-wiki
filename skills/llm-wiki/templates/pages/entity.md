@@ -23,8 +23,8 @@ One-line description of who/what this is and why they matter.
 
 ## Links
 
-- [[related-concept]]
-- [[related-entity]]
+- [Related Concept](/concepts/related-concept.md)
+- [Related Entity](/entities/related-entity.md)
 
 ## Sources
 

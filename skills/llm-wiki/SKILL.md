@@ -54,7 +54,7 @@ WIKI_ROOT/
 2. **META IS EXTENSION-OWNED.** Never edit `meta/` directly. `events.jsonl` is append-only authoritative activity state; other metadata files are generated projections.
 3. **YOU OWN THE WIKI.** Create, update, and cross-reference everything in `wiki/`.
 4. **ONE FILE PER THING.** Each entity, concept, source gets its own `.md` file.
-5. **CROSS-REFERENCE EVERYTHING.** Every page needs at least 2 links. Prefer standard Markdown: `[label](/folder/page.md)`. Legacy wikilinks `[[folder/page]]` remain readable.
+5. **CROSS-REFERENCE EVERYTHING.** Every page needs at least 2 links. Default short-title Markdown: `[Short Title](/folder/page.md)`. Do not use `[[folder/page]]` as visible body text (graph UIs treat the path as the label). Cite sources as `[SRC-…](/sources/SRC-….md)`. If a page has more than **15** outbound wiki links, split it (see Naming & linking).
 6. **CITE SOURCES.** Every claim links back to its raw source packet.
 7. **FLAG CONTRADICTIONS.** When sources disagree, document both sides.
 
@@ -258,16 +258,34 @@ Use these directly — they handle scaffolding, bookkeeping, recall, and capture
 2. `wiki_capture_trajectory(title="...")` — auto-extracts the tool-call trajectory into `raw/trajectories/TRJ-*` with a self-contained summary (no skeleton)
 3. Flesh out the `wiki/cases/` page (Task → Approach → Outcome)
 4. `wiki_distill_skills()` — get undistilled trajectories
-5. `wiki_ensure_page(type="skill", title="...")` — generalize into a reusable skill citing `[[trajectories/TRJ-...]]`
+5. `wiki_ensure_page(type="skill", title="...")` — generalize into a reusable skill citing `[TRJ-...](/trajectories/TRJ-....md)`
 6. Next time, `wiki_recall_skill(query="...")` surfaces the skill/case before you start
 
 ## Page Conventions
 
-### Naming
+### Naming & linking
 
-- `kebab-case.md` for all files
-- Standard Markdown links: `[label](/concepts/retrieval-augmented-generation.md)`
-- Legacy wikilinks still readable: `[[concepts/retrieval-augmented-generation]]`
+- Filenames come from `title` via `slugify` (this fork: Chinese titles → Chinese filenames; ASCII kebab still fine)
+- **Default:** `[Short Title](/folder/page.md)` (visible text = leaf short title, matching `title`/H1)
+- **Do not** put paths or type-dir prefixes in visible text (e.g. `syntheses/...`, `[syntheses/…/Board]`); write `[Board](/syntheses/…/Board.md)`
+- Legacy `[[folder/page]]` remains readable; **do not** use it as new visible body text
+- Sources: `[SRC-YYYY-MM-DD-NNN](/sources/SRC-YYYY-MM-DD-NNN.md)`
+
+### Type-dir index
+
+- `wiki/<type-dir>/index.md` indexes **root entry pages only**, not every nested child
+- Children are indexed from the overview page or `wiki/<type-dir>/<overview-short-title>/index.md`
+
+### Outbound link budget (15)
+
+If a page has more than **15** outbound links to other wiki pages, split it: keep the overview as the entry; put detail pages in a same-named folder:
+
+```
+wiki/<type-dir>/<overview-short-title>.md
+wiki/<type-dir>/<overview-short-title>/
+  index.md
+  <domain-short-title>.md
+```
 
 ### Frontmatter
 
@@ -287,14 +305,14 @@ Case: add `trajectory_id: TRJ-YYYY-MM-DD-NNN` and `outcome: success | failure | 
 
 ### Citations
 
-Use stable source IDs: `[[sources/SRC-2026-04-28-001]]`
-Cite trajectories with their stable IDs: `[[trajectories/TRJ-2026-04-28-001]]`
+Use stable source IDs: `[SRC-2026-04-28-001](/sources/SRC-2026-04-28-001.md)`
+Cite trajectories with their stable IDs: `[TRJ-2026-04-28-001](/trajectories/TRJ-2026-04-28-001.md)`
 
 ### Contradictions
 
 ```markdown
 > ⚠️ **Contradiction:** Source A claims X, but Source B claims Y.
-> See [[page-a]] and [[page-b]].
+> See [Page A](/concepts/page-a.md) and [Page B](/concepts/page-b.md).
 ```
 
 ## Variants
@@ -316,8 +334,8 @@ Open `wiki/` as an Obsidian vault. The extension generates:
 
 - `meta/index.md` — browsable catalog
 - `meta/backlinks.json` — for graph plugins
-- Standard Markdown links — preferred for new pages
-- Legacy wikilinks — still readable
+- Standard Markdown links — preferred for new pages; visible text uses short titles
+- Legacy wikilinks — still readable; do not use as new visible body text
 
 Recommended plugins: Dataview, Graph View, Backlinks
 

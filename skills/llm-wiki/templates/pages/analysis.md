@@ -16,7 +16,7 @@ sources_count: 0
 
 ## Answer
 
-[Synthesized answer with [[wikilink]] citations to specific pages.]
+[Synthesized answer with short-title citations, e.g. [Example Concept](/concepts/example-concept.md).]
 
 ## Key Insights
 
@@ -26,10 +26,10 @@ sources_count: 0
 
 ## Sources Used
 
-- [[source-1]]
-- [[source-2]]
+- [SRC-YYYY-MM-DD-001](/sources/SRC-YYYY-MM-DD-001.md)
+- [SRC-YYYY-MM-DD-002](/sources/SRC-YYYY-MM-DD-002.md)
 
 ## Related Pages
 
-- [[concept-1]]
-- [[entity-1]]
+- [Concept One](/concepts/concept-one.md)
+- [Entity One](/entities/entity-one.md)

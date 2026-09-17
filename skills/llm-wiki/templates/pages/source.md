@@ -23,13 +23,13 @@ topics:
 
 ## Entities Mentioned
 
-- [[entity-1]]
-- [[entity-2]]
+- [Entity One](/entities/entity-one.md)
+- [Entity Two](/entities/entity-two.md)
 
 ## Concepts Mentioned
 
-- [[concept-1]]
-- [[concept-2]]
+- [Concept One](/concepts/concept-one.md)
+- [Concept Two](/concepts/concept-two.md)
 
 ## Notable Quotes
 
@@ -37,8 +37,8 @@ topics:
 
 ## Connections
 
-- This source relates to [[existing-page]] because...
-- Contrasts with [[other-source]] on the topic of...
+- This source relates to [Existing Page](/concepts/existing-page.md) because...
+- Contrasts with [Other Source](/sources/SRC-YYYY-MM-DD-001.md) on the topic of...
 
 ## Source
 

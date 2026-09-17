@@ -3,6 +3,11 @@ import { join } from "node:path";
 import { createKnowledgeDocument, serializeKnowledgeDocument } from "./knowledge-document.js";
 import { buildResolvedBacklinks, buildWikilinkIndex } from "./knowledge-links.js";
 import { repairLegacyKnowledgeDocuments } from "./legacy-repair.js";
+import {
+  extractMarkdownLinkLabels,
+  isPathLikeLinkLabel,
+  OUTBOUND_WIKI_LINK_LIMIT,
+} from "./linking-style.js";
 import { appendEvent, rebuildMetadata, rebuildMetadataLight } from "./metadata.js";
 import { readQmdIndexStatus } from "./qmd-indexing.js";
 import { fmtDate, slugify, type VaultPaths, writeJson } from "./utils.js";
@@ -63,6 +68,8 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
   const findings: string[] = [];
   let missingPages = 0;
   let contradictions = 0;
+  let outboundOverLimit = 0;
+  let pathLikeLabels = 0;
 
   for (const page of pages) {
     const resolved = buildResolvedBacklinks(page.id, page.body, wikilinkIndex);
@@ -78,6 +85,22 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
       if (d.code === "link_ambiguous") {
         findings.push(d.message.replace("Ambiguous wikilink: ", "歧义链接: "));
       }
+    }
+
+    // Soft style checks: outbound budget + short-title visible labels
+    const outboundCount = resolved.targets.length;
+    if (outboundCount > OUTBOUND_WIKI_LINK_LIMIT) {
+      outboundOverLimit++;
+      findings.push(
+        `出链过多: ${page.id} 有 ${outboundCount} 条正向 wiki 出链（阈值 ${OUTBOUND_WIKI_LINK_LIMIT}）；请拆分为总览 + 同名文件夹子页`,
+      );
+    }
+    for (const label of extractMarkdownLinkLabels(page.body)) {
+      if (!isPathLikeLinkLabel(label)) continue;
+      pathLikeLabels++;
+      findings.push(
+        `链接可见文案像路径: ${page.id} 使用了「${label}」；请改为叶名短标题（与 title/H1 一致）`,
+      );
     }
   }
 
@@ -144,6 +167,8 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
     `- 孤立页: ${orphans}`,
     `- 缺失页面: ${missingPages}`,
     `- 矛盾: ${contradictions}`,
+    `- 出链超限页: ${outboundOverLimit}`,
+    `- 路径型链接文案: ${pathLikeLabels}`,
     autoFix ? `- 已应用缺失页修复: ${fixesApplied}` : "",
     repair?.repaired ? `- 已修复遗留页面: ${repair.repaired}` : "",
     repair?.manifestPath ? `- 修复清单: ${repair.manifestPath}` : "",
@@ -204,6 +229,8 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
     `- Orphans: ${orphans}`,
     `- Missing: ${missingPages}`,
     `- Contradictions: ${contradictions}`,
+    `- Outbound over limit: ${outboundOverLimit}`,
+    `- Path-like link labels: ${pathLikeLabels}`,
     autoFix ? `- Missing-page fixes: ${fixesApplied}` : "",
     repair?.repaired ? `- Legacy pages repaired: ${repair.repaired}` : "",
     "",
@@ -214,6 +241,13 @@ export async function runWikiLint(paths: VaultPaths, autoFix: boolean): Promise<
     "## QMD Index",
     `- State: ${qmdStatus.state}`,
     ...qmdFindings,
+    ...(() => {
+      const style = findings.filter(
+        (f) => f.startsWith("出链过多") || f.startsWith("链接可见文案像路径"),
+      );
+      if (style.length === 0) return [];
+      return ["", "## Linking style", ...style.map((f) => `- ${f}`)];
+    })(),
   ]
     .filter(Boolean)
     .join("\n");

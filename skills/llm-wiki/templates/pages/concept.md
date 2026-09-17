@@ -26,8 +26,8 @@ One-line definition of this concept.
 
 ## Related Concepts
 
-- [[related-concept-1]]
-- [[related-concept-2]]
+- [Related Concept One](/concepts/related-concept-one.md)
+- [Related Concept Two](/concepts/related-concept-two.md)
 
 ## Sources
 

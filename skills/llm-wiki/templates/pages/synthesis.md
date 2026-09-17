@@ -30,11 +30,11 @@ sources_count: N
 
 ## Sources Used
 
-- [[source-1]]
-- [[source-2]]
-- [[source-3]]
+- [SRC-YYYY-MM-DD-001](/sources/SRC-YYYY-MM-DD-001.md)
+- [SRC-YYYY-MM-DD-002](/sources/SRC-YYYY-MM-DD-002.md)
+- [SRC-YYYY-MM-DD-003](/sources/SRC-YYYY-MM-DD-003.md)
 
 ## Related Pages
 
-- [[concept-1]]
-- [[entity-1]]
+- [Concept One](/concepts/concept-one.md)
+- [Entity One](/entities/entity-one.md)
